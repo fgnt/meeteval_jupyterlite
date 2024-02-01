@@ -1,29 +1,33 @@
-# JupyterLite Demo
+# MeetEval demo running in JupyterLite
 
-[![lite-badge](https://jupyterlite.rtfd.io/en/latest/_static/badge.svg)](https://jupyterlite.github.io/demo)
+This repository contains the code for the visualization demo of [MeetEval](github.com/fgnt/meeteval).
 
-JupyterLite deployed as a static site to GitHub Pages, for demo purposes.
+## Building
 
-## ✨ Try it in your browser ✨
+To build the demo, you first have to install Pyodide and build the `meeteval` package as a WebAssembly module [as described here](https://pyodide.org/en/stable/development/building-and-testing-packages.html).
 
-➡️ **https://jupyterlite.github.io/demo**
+```bash
+# Install Pyodide
+pip install pyodide-build
 
-![github-pages](https://user-images.githubusercontent.com/591645/120649478-18258400-c47d-11eb-80e5-185e52ff2702.gif)
+# Install and setup emscripten
+git clone https://github.com/emscripten-core/emsdk.git
+cd emsdk
+PYODIDE_EMSCRIPTEN_VERSION=$(pyodide config get emscripten_version)
+./emsdk install ${PYODIDE_EMSCRIPTEN_VERSION}
+./emsdk activate ${PYODIDE_EMSCRIPTEN_VERSION}
+source emsdk_env.sh
+cd ..
 
-## Requirements
+# Clone and build meeteval
+git clone https://github.com/fgnt/meeteval
+cd meeteval
+pyodide build
+cd ..
 
-JupyterLite is being tested against modern web browsers:
+# Copy the built package to the demo folder
+cp meeteval/dist/meeteval.* pypi
 
-- Firefox 90+
-- Chromium 89+
-
-## Deploy your JupyterLite website on GitHub Pages
-
-Check out the guide on the JupyterLite documentation: https://jupyterlite.readthedocs.io/en/latest/quickstart/deploy.html
-
-## Further Information and Updates
-
-For more info, keep an eye on the JupyterLite documentation:
-
-- How-to Guides: https://jupyterlite.readthedocs.io/en/latest/howto/index.html
-- Reference: https://jupyterlite.readthedocs.io/en/latest/reference/index.html
+# Build the demo
+jupyter lite build --output-dir dist
+```
